@@ -3,8 +3,9 @@ import Web3 from 'web3'
 let getWeb3 = new Promise(function (resolve, reject) {
   window.addEventListener('load', function () {
     let results;
-    let web3 = window.web3;
 
+    let web3 = window.web3;
+    // let web3 = require("web3");
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 !== 'undefined') {
       // Use Mist/MetaMask's provider.
@@ -19,6 +20,7 @@ let getWeb3 = new Promise(function (resolve, reject) {
     } else {
       let provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
       web3 = new Web3(provider);
+
 
       results = {
         web3: web3

@@ -1,8 +1,7 @@
-import DeviceManager, { getDefaultAccount } from '../DeviceManager';
-
 import React, { Component } from 'react';
-import { Spin, List, message } from 'antd';
+import {Spin, List, message, Button} from 'antd';
 import { Link } from 'react-router-dom';
+import getWeb3j from "../utils/web3js";
 
 class ManageDevices extends Component {
   constructor(props) {
@@ -10,28 +9,47 @@ class ManageDevices extends Component {
     this.state = {
       loading: true,
       instance: null,
-      devices: []
+      devices: [],
+      balances:[]
     }
   }
 
   async componentDidMount() {
     try {
-      let instance = await DeviceManager;
-      let deviceIds = (await instance.getDevicesByOwner(getDefaultAccount())).map(el => el.toNumber());
+      //let instance = await DeviceManager;
+      //let deviceIds = (await instance.getDevicesByOwner(getDefaultAccount())).map(el => el.toNumber());
 
-      let devicePromises = [];
-      for (let deviceId of deviceIds) {
-        let devicePromise = instance.devices(deviceId);
-        devicePromises.push(devicePromise);
-      }
+      // let devicePromises = [];
+      // for (let deviceId of deviceIds) {
+      //   let devicePromise = instance.devices(deviceId);
+      //   devicePromises.push(devicePromise);
+      // }
+      //
+      // let devices = await Promise.all(devicePromises);
 
-      let devices = await Promise.all(devicePromises);
+      let results=await getWeb3j;
 
       this.setState({
-        instance,
+        web3: results.web3,
+        //instance,
+      });
+
+
+
+
+      let deviceIds=results.web3.eth.accounts;
+      let devices=deviceIds;
+      let balances=[]
+      for (let i = 0; i < deviceIds.length; i++) {
+        balances.push(results.web3.eth.getBalance(deviceIds[i]))
+      }
+
+      this.setState({
+        //instance,
         devices,
         deviceIds,
-        loading: false
+        loading: false,
+        balances:balances
       });
     } catch (error) {
       console.log(error);
@@ -58,8 +76,8 @@ class ManageDevices extends Component {
                   <List.Item>
                     <List.Item.Meta
                       /*avatar={<Icon type="profile" style={{ fontSize: 36 }} />}*/
-                      title={<Link to={`/manage-device/${this.state.deviceIds[index]}`}>{`Device ID ${this.state.deviceIds[index]}`}</Link>}
-                      description={`Identifier ${device[1]}`}
+                      title={<Link to={`/check-signatures/${this.state.deviceIds[index]}`}>{`Device ID ${this.state.deviceIds[index]}`}</Link>}
+                      description={`Balance ${this.state.balances[index]}`}
                     />
                   </List.Item>
                 )}

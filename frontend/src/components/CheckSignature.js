@@ -1,6 +1,3 @@
-import getWeb3 from '../utils/web3';
-import DeviceManager from '../DeviceManager';
-
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Tag, Divider, Spin, Alert } from 'antd';
@@ -15,9 +12,9 @@ class CheckSignature extends Component {
       showError: false
     }
   }
-  
+
   componentWillReceiveProps({ match }) {
-    this.setState({ 
+    this.setState({
       ...this.state,
       showError: false,
       signatureId: match.params.signatureId
@@ -26,12 +23,12 @@ class CheckSignature extends Component {
 
   async componentWillMount() {
     try {
-      let web3 = (await getWeb3).web3;
-      let instance = await DeviceManager;
+      //let web3 = (await getWeb3).web3;
+      //let instance = await DeviceManager;
 
       this.setState({
-        web3,
-        instance
+        //web3,
+        //instance
       });
 
       this.updateSignatureData();
@@ -48,13 +45,14 @@ class CheckSignature extends Component {
   async updateSignatureData() {
     try {
       const { instance, signatureId } = this.state;
-      let signature = await instance.signatures(signatureId);
+      //let signature = await instance.signatures(signatureId);
+      let signature=[1,2,3,4];
 
       this.setState({
         loading: false,
         signer: signature[0],
-        deviceId: signature[1].toNumber(),
-        expiryTime: signature[2].toNumber(),
+        deviceId: signature[1],
+        expiryTime: signature[2],
         revoked: signature[3],
       });
     } catch (error) {
@@ -92,7 +90,7 @@ class CheckSignature extends Component {
           }
         </Spin >
       </div>
-    );
+    )
   }
 }
 

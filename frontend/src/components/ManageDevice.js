@@ -5,6 +5,7 @@ import { addHexPrefix } from 'ethereumjs-util';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Tag, Button, Input, Card, Timeline, Divider, Spin, Alert, Icon, notification, message } from 'antd';
+import {aop} from "../DeviceManager";
 
 const openNotificationWithIcon = (type, message, description) => {
   notification[type]({
@@ -182,7 +183,7 @@ class ManageDevice extends Component {
           break;
         case 'transfer':
           if (owner !== ownerNew) {
-            await instance.transferDevice(deviceId, addHexPrefix(ownerNew), { from: getDefaultAccount() });
+            aop(instance.transferDevice(deviceId, addHexPrefix(ownerNew), { from: getDefaultAccount() }));
             this.watchForChanges('owner');
             openNotificationWithIcon('info', 'Transaction sent', 'Once mined, owner for this device will be updated.');
             this.setState({

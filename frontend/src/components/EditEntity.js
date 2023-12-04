@@ -1,10 +1,9 @@
-import getWeb3 from '../utils/web3';
-import DeviceManager, { getDefaultAccount } from '../DeviceManager';
-
+import getWeb3j from '../utils/web3js';
 import React, { Component } from 'react';
 import { Card, Input, Button, Icon, message, notification } from 'antd';
 
 const { TextArea } = Input;
+
 
 const openNotificationWithIcon = (type, message, description) => {
   notification[type]({
@@ -35,12 +34,13 @@ class EditEntity extends Component {
 
   async componentWillMount() {
     try {
-      let results = await getWeb3;
-      let instance = await DeviceManager;
+      //let results = await getWeb3;
+      //let instance = await DeviceManager;
+      let results=await getWeb3j;
 
       this.setState({
         web3: results.web3,
-        instance
+        //instance,
       });
 
       this.updateMyData();
@@ -69,7 +69,8 @@ class EditEntity extends Component {
 
   async updateMyData() {
     try {
-      let result = await this.state.instance.ownerToEntity(getDefaultAccount());
+      //let result = await this.state.instance.ownerToEntity(getDefaultAccount());
+      let result=this.state.web3.eth.accounts[0];
       this.setState({
         myData: result,
         myDataNew: result,
@@ -97,8 +98,13 @@ class EditEntity extends Component {
     try {
       if (this.state.myDataNew !== this.state.myData) {
         let instance = await DeviceManager;
+
+        // await aop(instance.updateEntityData(this.state.myDataNew, { from: getDefaultAccount() }));
+
         await instance.updateEntityData(this.state.myDataNew, { from: getDefaultAccount() });
+
         this.watchForChanges();
+
         openNotificationWithIcon('info', 'Transaction sent', 'Once mined, your entity data will be updated.');
         this.setState({
           loading: true,
@@ -121,7 +127,7 @@ class EditEntity extends Component {
           {this.state.showEdit ?
             <div>
               <TextArea name="myDataNew" value={this.state.myDataNew} onChange={this.commonChange} />
-              <Button type="primary" style={{ marginTop: '10px' }} onClick={this.saveMyData}>Save</Button>
+              <Button  type="primary" style={{ marginTop: '10px' }} onClick={this.saveMyData}>Save</Button>
             </div>
             :
             <p>{this.state.myData || <em>empty data</em>} <a><Icon type="edit" onClick={this.toggleEdit} /></a></p>
